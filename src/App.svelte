@@ -4,6 +4,7 @@
 	import ViewScreen from './ViewScreen.svelte';
 	import OrbBar from './OrbBar.svelte';
 	import AbilityBar from './AbilityBar.svelte';
+	import { Tabs, Tab, TabList, TabPanel } from 'svelte-tabs';
 	import AbilityList from './AbilityList.svelte';
 
 	let enemiesKilled = 0;
@@ -209,7 +210,24 @@
 	<ViewScreen></ViewScreen>
 	<AbilityBar activeIndex={activeAbilityIndex}></AbilityBar>
 	<OrbBar></OrbBar>
-	<AbilityList></AbilityList>
+	<Tabs>
+		<TabList>
+			<Tab>Abilities</Tab>
+			{#if $player.location == 0}
+				<Tab>Shop</Tab>
+			{/if}
+		</TabList>
+		<TabPanel>
+			<AbilityList></AbilityList>
+		</TabPanel>
+		{#if $player.location == 0}
+			<TabPanel>
+				<div>
+					Shop will go here!
+				</div>
+			</TabPanel>
+		{/if}
+	</Tabs>
 </main>
 
 <style>
@@ -220,5 +238,16 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+	}
+    :global(#dnd-action-dragged-el){
+        opacity: .9 !important;
+    }
+	:global(.svelte-tabs) {
+		width: 100%;
+		text-align: center;
+		padding-top: 30px;
+	}
+	:global(.svelte-tabs__tab-panel) {
+		padding-top: 20px;
 	}
 </style>

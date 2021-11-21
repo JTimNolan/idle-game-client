@@ -9,6 +9,7 @@ export const player = writable({
     gold: 0,
     combo: 0,
     effects: [],
+    location: 0,
 });
 
 export const activeAbilities = writable([2,3,4,5,0]);

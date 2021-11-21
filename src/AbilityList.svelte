@@ -26,7 +26,6 @@
 </script>
 
 <div class="ability-list-container">
-    <h3>Ability List</h3>
     <div class="ability-list" use:dndzone={{items}} on:consider={handleDndConsider} on:finalize={handleDndFinalize}>
         {#each items as ability (ability.id)}
             <AbilityTile expanded={true} {ability} dragging={!!ability[SHADOW_ITEM_MARKER_PROPERTY_NAME]} />
@@ -35,15 +34,6 @@
 </div>
 
 <style>
-    :global(#dnd-action-dragged-el){
-        opacity: .9 !important;
-    }
-    .ability-list-container {
-        width: 100%;
-        text-align: center;
-        border-top: 1px solid black;
-        margin-top: 20px;
-    }
     .ability-list {
         display: flex;
         justify-content: center;

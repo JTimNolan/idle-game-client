@@ -12,5 +12,6 @@
 <style>
 	.orb-bar {
 		display: flex;
+		padding-top: 15px;
 	}
 </style>

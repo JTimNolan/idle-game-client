@@ -1,3 +1,12 @@
+
+const listToObject = list => {
+    return list.reduce((carry, item, index) => {
+        item.id = index;
+        carry[item.id] = item;
+        return carry;
+    }, {});
+}
+
 export const abilityList = [
     {name: "Nothing!", icon: "-", damage: 0, speed: 0},
     {name: "Punch", icon: "P", damage: 1, speed: 2},
@@ -13,11 +22,7 @@ export const abilityList = [
     {name: "Mud Slap", icon: "MS", damage: 3, speed: 2, cost: {W: 1, E: 1}, orbs: ['E', 'P']},
     {name: "Landslide", icon: "LS", damage: 20, speed: 5, cost: {E: 5}},
 ];
-export const abilities = abilityList.reduce((carry, item, index) => {
-    item.id = index;
-    carry[item.id] = item;
-    return carry;
-}, {});
+export const abilities = listToObject(abilityList);
 
 export const orbs = {
     "P": {
@@ -41,3 +46,9 @@ export const orbs = {
         icon: '🟤',
     },
 };
+
+export const locationList = [
+    {name: "Town"},
+    {name: "Killing Fields"},
+];
+export const locations = listToObject(locationList);
