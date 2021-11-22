@@ -4,6 +4,7 @@ export const player = writable({
     title: "Player",
     health: 100,
     maxHealth: 100,
+    activeAbilityIndex: 0,
     abilityWindup: 0,
     maxOrbs: 7,
     gold: 0,

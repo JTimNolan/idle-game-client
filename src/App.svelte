@@ -1,6 +1,6 @@
 <script>
 	import { player, activeAbilities, enemy, orbs } from './stores';
-	import { abilities } from './data';
+	import { abilities, enemies, locationList } from './data';
 	import ViewScreen from './ViewScreen.svelte';
 	import OrbBar from './OrbBar.svelte';
 	import AbilityBar from './AbilityBar.svelte';
@@ -8,7 +8,6 @@
 	import AbilityList from './AbilityList.svelte';
 
 	let enemiesKilled = 0;
-	let activeAbilityIndex = 0;
 	
 	function loadGame(){
 		const loadedStateString = localStorage.getItem('gameState');
@@ -20,15 +19,32 @@
 			return false;
 		}
 		console.log("Loaded game");
-		$activeAbilities = state.activeAbilities;
+		$activeAbilities = state.activeAbilities || $activeAbilities;
+		$player = state.player || $player;
+		goToLocation($player.location);
 	}
 	function saveGame(){
-		const state = {activeAbilities: $activeAbilities, savedAt: new Date().getTime()};
+		const state = {
+			activeAbilities: $activeAbilities,
+			player: $player,
+			savedAt: new Date().getTime(),
+			version: '0.0.1',
+		};
 		localStorage.setItem('gameState', JSON.stringify(state));
 		return true;
 	}
+	function goToLocation(locationId){
+		if(locationId == 0){
+			stopCombat();
+		} else {
+			startCombat(enemies.TEST);
+		}
+	}
 	
-	loadGame();
+	if(!loadGame()){
+		goToLocation(0);
+		saveGame();
+	}
 
 	// TODO: Use a real game loop
 	// TODO: Fix issue where cost is not considered for first turn
@@ -42,13 +58,15 @@
 		saveGame();
 	}
 	const playerTick = () => {
-		const abilityIndex = activeAbilityIndex;
-		const ability = abilities[$activeAbilities[abilityIndex]];
+		if(!$enemy){
+			return;
+		}
+		const ability = abilities[$activeAbilities[$player.activeAbilityIndex]];
 
 		$player.effects = clearOldEffects($player.effects);
 
 		if(!canPayOrbCost(ability.cost, $orbs)){
-			goToNextAbility(abilityIndex);
+			goToNextAbility($player.activeAbilityIndex);
 			return;
 		}
 
@@ -104,10 +122,13 @@
 			if(ability.speed > 0){
 				$player.combo += 1;
 			}
-			goToNextAbility(abilityIndex);
+			goToNextAbility($player.activeAbilityIndex);
 		}
 	}
 	const enemyTick = () => {
+		if(!$enemy){
+			return;
+		}
 		$enemy.effects = clearOldEffects($enemy.effects);
 		// Handle enemy death
 		if($enemy.health <= 0){
@@ -117,15 +138,10 @@
 			// 	type: 'damage',
 			// }];
 			const reward = Math.floor(Math.random()*($enemy.maxHealth/10))+1;
-			combatLog(`${$enemy.title} killed! Found ${reward} gold.`);
 			$player.gold += reward;
-			$enemy.maxHealth += 10;
-			$enemy.health = $enemy.maxHealth;
-			$enemy.abilityWindup = 0;
-			activeAbilityIndex = 0;
-			$player.abilityWindup = 0;
-			$player.combo = 0;
-			$orbs = [];
+			combatLog(`${$enemy.title} killed! Found ${reward} gold.`);
+			const newHealth = $enemy.maxHealth + 10;
+			startCombat({...$enemy, health: newHealth, maxHealth: newHealth});
 			return;
 		}
 		$enemy.abilityWindup += tickrate;
@@ -140,14 +156,10 @@
 			}];
 			combatLog(`${$enemy.title} attacks for ${$enemy.damage} damage`);
 			if($player.health <= 0){
-				// TODO: Handle player death
-				activeAbilityIndex = 0;
-				$player.abilityWindup = 0;
-				$player.combo = 0;
-				$orbs = [];
-				$player.gold = 0;
-				$player.combo = 0;
+				// TODO: Message for player death
 				$player.health = $player.maxHealth;
+				$player.gold = 0;
+				goToLocation(0);
 				// $player.effects = [...$player.effects, {
 				// 	text: `RIP`,
 				// 	start: new Date().getTime(),
@@ -166,7 +178,7 @@
 			goToNextAbility(nextAbilityIndex);
 			return;
 		}
-		activeAbilityIndex = nextAbilityIndex;
+		$player.activeAbilityIndex = nextAbilityIndex;
 	}
 	function canPayOrbCost(abilityCost, orbs){
 		if(!abilityCost){
@@ -199,6 +211,21 @@
 		gap = (new Date().getTime()) - gap;
 		return effects.filter(e => e.start > gap);
 	}
+	function startCombat(enemyData){
+		$enemy = enemyData;
+		$enemy.abilityWindup = 0;
+		$player.activeAbilityIndex = 0;
+		$player.abilityWindup = 0;
+		$player.combo = 0;
+		$orbs = [];
+	}
+	function stopCombat(){
+		$enemy = false;
+		$player.activeAbilityIndex = 0;
+		$player.abilityWindup = 0;
+		$player.combo = 0;
+		$orbs = [];
+	}
 	function combatLog(line){
 		return false;
 		console.log(line);
@@ -208,17 +235,27 @@
 <main class="app">
 	<div>Gold: {$player.gold} | Combo: {getComboMultiplier($player.combo)}x ({$player.combo} hit{$player.combo != 1 ? 's' : ''})</div>
 	<ViewScreen></ViewScreen>
-	<AbilityBar activeIndex={activeAbilityIndex}></AbilityBar>
+	<AbilityBar activeIndex={$player.activeAbilityIndex}></AbilityBar>
 	<OrbBar></OrbBar>
 	<Tabs>
 		<TabList>
 			<Tab>Abilities</Tab>
+			<Tab>Travel</Tab>
 			{#if $player.location == 0}
 				<Tab>Shop</Tab>
 			{/if}
 		</TabList>
 		<TabPanel>
 			<AbilityList></AbilityList>
+		</TabPanel>
+		<TabPanel>
+			<div>
+				{#each locationList as location (location.id)}
+					<div>
+						<button on:click={e => goToLocation(location.id)}>{location.name}</button>
+					</div>
+				{/each}
+			</div>
 		</TabPanel>
 		{#if $player.location == 0}
 			<TabPanel>

@@ -52,3 +52,19 @@ export const locationList = [
     {name: "Killing Fields"},
 ];
 export const locations = listToObject(locationList);
+
+// export const enemies = Object.entries({
+    // TEST: {name: "Test Enemy"}
+// }).map(([value, id]) => {return {...value, id}});
+
+export const enemies = {
+    TEST: {
+        title: "Test Enemy",
+        health: 100,
+        maxHealth: 100,
+        damage: 1,
+        speed: 2.5,
+        abilityWindup: 0,
+        effects: [],
+    },
+};

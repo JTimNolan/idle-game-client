@@ -5,7 +5,9 @@
 
 <div class="viewscreen">
 	<Character character={$player} side="left"></Character>
-	<Character character={$enemy} side="right"></Character>
+	{#if $enemy}
+		<Character character={$enemy} side="right"></Character>
+	{/if }
 </div>
 
 <style>
