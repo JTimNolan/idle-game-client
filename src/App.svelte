@@ -39,6 +39,7 @@
 		} else {
 			startCombat(enemies.TEST);
 		}
+		$player.location = locationId;
 	}
 	
 	if(!loadGame()){
@@ -241,6 +242,8 @@
 		<TabList>
 			<Tab>Abilities</Tab>
 			<Tab>Travel</Tab>
+			<Tab>Inventory</Tab>
+			<Tab>Equipment</Tab>
 			{#if $player.location == 0}
 				<Tab>Shop</Tab>
 			{/if}
@@ -255,6 +258,16 @@
 						<button on:click={e => goToLocation(location.id)}>{location.name}</button>
 					</div>
 				{/each}
+			</div>
+		</TabPanel>
+		<TabPanel>
+			<div>
+				Inventory will go here!
+			</div>
+		</TabPanel>
+		<TabPanel>
+			<div>
+				Equipment will go here!
 			</div>
 		</TabPanel>
 		{#if $player.location == 0}
