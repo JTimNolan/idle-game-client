@@ -1,5 +1,5 @@
 <script>
-	import { player, activeAbilities, enemy, orbs } from './stores';
+	import { player, activeAbilities, enemy, orbs, inventory, equipment } from './stores';
 	import { abilities, enemies, locationList } from './data';
 	import ViewScreen from './ViewScreen.svelte';
 	import OrbBar from './OrbBar.svelte';
@@ -23,12 +23,16 @@
 		console.log("Loaded game");
 		$activeAbilities = state.activeAbilities || $activeAbilities;
 		$player = state.player || $player;
+		$inventory = state.inventory || $inventory;
+		$equipment = state.equipment || $equipment;
 		goToLocation($player.location);
 	}
 	function saveGame(){
 		const state = {
 			activeAbilities: $activeAbilities,
 			player: $player,
+			inventory: $inventory,
+			equipment: $equipment,
 			savedAt: new Date().getTime(),
 			version: '0.0.1',
 		};
