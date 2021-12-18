@@ -8,6 +8,8 @@
         <div class={"equipment-slot equipment-slot-"+i}>
             {#if !!item}
                 <ItemTile {item} />
+            {:else}
+                {i}
             {/if}
         </div>
     {/each}
