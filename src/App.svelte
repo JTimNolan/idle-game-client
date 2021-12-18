@@ -6,6 +6,8 @@
 	import AbilityBar from './AbilityBar.svelte';
 	import { Tabs, Tab, TabList, TabPanel } from 'svelte-tabs';
 	import AbilityList from './AbilityList.svelte';
+	import Inventory from './Inventory.svelte';
+	import Equipment from './Equipment.svelte';
 
 	let enemiesKilled = 0;
 	
@@ -48,9 +50,7 @@
 	}
 
 	// TODO: Use a real game loop
-	// TODO: Fix issue where cost is not considered for first turn
 	// TODO: Handle case where no moves can be played
-	// TODO: Combo system
 	const tickrate = 50;
 	const loopInterval = setInterval(tick, tickrate);
 	function tick(){
@@ -249,7 +249,9 @@
 			{/if}
 		</TabList>
 		<TabPanel>
-			<AbilityList></AbilityList>
+			<div>
+				<AbilityList></AbilityList>
+			</div>
 		</TabPanel>
 		<TabPanel>
 			<div>
@@ -262,12 +264,12 @@
 		</TabPanel>
 		<TabPanel>
 			<div>
-				Inventory will go here!
+				<Inventory />
 			</div>
 		</TabPanel>
 		<TabPanel>
 			<div>
-				Equipment will go here!
+				<Equipment />
 			</div>
 		</TabPanel>
 		{#if $player.location == 0}
@@ -289,6 +291,15 @@
 		justify-content: center;
 		align-items: center;
 	}
+	:global(html){
+		box-sizing: border-box;
+	}
+	:global(*, *:before, *:after){
+		box-sizing: inherit;
+	}
+	:global(body){
+		user-select: none;
+	}
     :global(#dnd-action-dragged-el){
         opacity: .9 !important;
     }
@@ -298,6 +309,10 @@
 		padding-top: 30px;
 	}
 	:global(.svelte-tabs__tab-panel) {
+	    margin-top: 0 !important;
+	}
+	:global(.svelte-tabs__tab-panel) > div {
 		padding-top: 20px;
+		overflow-y: auto;
 	}
 </style>

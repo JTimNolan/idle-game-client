@@ -26,3 +26,7 @@ export const enemy = writable({
     abilityWindup: 0,
     effects: [],
 });
+
+export const inventory = writable(new Array(28));
+
+export const equipment = writable(new Array(8));

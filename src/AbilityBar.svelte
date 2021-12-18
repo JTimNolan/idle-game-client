@@ -39,7 +39,6 @@
 		justify-content: center;
 		align-items: center;
 		cursor: pointer;
-		user-select: none;
 	}
 	.expand-icon span {
 		margin-top: -4px;

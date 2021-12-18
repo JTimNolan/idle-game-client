@@ -1,7 +1,7 @@
 <script>
     import {abilities} from './data';
     import AbilityTile from './AbilityTile.svelte';
-    import {dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME, TRIGGERS, DRAGGED_ELEMENT_ID} from "svelte-dnd-action";
+    import {dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME, TRIGGERS} from "svelte-dnd-action";
 
     let items = Object.values(abilities);
     function handleDndConsider(e){
